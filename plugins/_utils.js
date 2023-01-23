@@ -1,5 +1,5 @@
 let riotclient_auth, riotclient_port;
-let regex_rc_auth = /^--riotclient-auth-token=([a-zA-Z0-9]+)$/
+let regex_rc_auth = /^--riotclient-auth-token=(.+)$/
 let regex_rc_port = /^--riotclient-app-port=([0-9]+)$/
 let phase; // automatically updated to current gameflow phase
 let debug_sub = false // to display debug messages
