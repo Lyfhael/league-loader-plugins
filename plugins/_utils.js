@@ -1,9 +1,9 @@
 let riotclient_auth, riotclient_port;
 let regex_rc_auth = /^--riotclient-auth-token=([a-zA-Z0-9]+)$/
 let regex_rc_port = /^--riotclient-app-port=([0-9]+)$/
-let phase;
+let phase; // automatically updated to current gameflow phase
 let debug_sub = true // to display debug messages
-let observerCallbacks = []
+let observerCallbacks = [] // array of functions that will be called in MutationObserver API
 
 /**
  * Subscribe to a specific endpoint, and trigger callback function when that endpoint is called
