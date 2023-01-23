@@ -12,7 +12,6 @@ async function send_message_in_lobby(message) {
 	await fetch(`/lol-chat/v1/conversations/${pvp_net_room_id}/messages`, {
 		"headers": {
 			"accept": "application/json",
-			"accept-language": "en-US,en;q=0.9",
 			"content-type": "application/json",
 		},
 		"body": `{\"type\":\"chat\",\"fromId\":\"${utils.pvp_net_id}\",\"fromSummonerId\":${utils.summoner_id},\"isHistorical\":false,\"timestamp\":\"${new Date().toISOString()}\",\"body\":\"${message}\"}`,
