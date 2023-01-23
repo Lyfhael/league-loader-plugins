@@ -25,10 +25,15 @@ async function subscribe_endpoint(endpoint, callback) {
 async function fetch_riotclient_credentials(){
 	await fetch("/riotclient/command-line-args", {
 		"method": "GET",
-	}).then(response=>response.json()).then(data=>{data.forEach(elem => {if (regex_rc_auth.exec(elem)) riotclient_auth = regex_rc_auth.exec(elem)[1]; else if (regex_rc_port.exec(elem)) riotclient_port = regex_rc_port.exec(elem)[1];}); })
-
+	}).then(response=>response.json()).then(data=>{data.forEach(elem => {
+		if (regex_rc_auth.exec(elem))
+			to_export.riotclient_auth = regex_rc_auth.exec(elem)[1];
+		else if (regex_rc_port.exec(elem))
+			to_export.riotclient_port = regex_rc_port.exec(elem)[1];
+		});
+	})
 	if (debug_sub)
-		console.log(riotclient_auth, riotclient_port)   
+		console.log(to_export.riotclient_auth, to_export.riotclient_port)   
 }
 
 /** Callback function to be sent in subscribe_endpoint() to update the variable holding user pvp.net infos */
