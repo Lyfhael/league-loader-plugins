@@ -26,7 +26,8 @@ let sendMessageUponArrivingLobby = async message => {
 	if (utils.debug_sub)
 		console.log(utils.phase, utils.pvp_net_id, utils.summoner_id, pvp_net_room_id)
 
-	if (regex1.exec(data[2]["uri"]) && "body" in data[2]["data"] && data[2]["data"]["body"] == "joined_room" && phasesTracked.includes(utils.phase)) {
+	console.log(data)
+	if (regex1.exec(data[2]["uri"]) && data[2]["data"] && "body" in data[2]["data"] && data[2]["data"]["body"] == "joined_room" && phasesTracked.includes(utils.phase)) {
 		utils.phase = utils.phase + "AdvertiseDone"
 		pvp_net_room_id = regex2.exec(data[2]["uri"])[1]
 		clearTimeout(set_timeout_player_joined) // goal is to delay the sending of the message until last player joined. Remove this line if necessary
