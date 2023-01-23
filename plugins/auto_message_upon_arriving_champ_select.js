@@ -23,7 +23,7 @@ async function send_message_in_lobby(message) {
 let sendMessageUponArrivingLobby = async message => {
 	const data = JSON.parse(message.data)
 	const phasesTracked = ["ChampSelect", "EndOfGame", "PreEndOfGame", "WaitingForStats"]
-	if (debug_sub)
+	if (utils.debug_sub)
 		console.log(utils.phase, utils.pvp_net_id, utils.summoner_id, pvp_net_room_id)
 
 	if (regex1.exec(data[2]["uri"]) && "body" in data[2]["data"] && data[2]["data"]["body"] == "joined_room" && phasesTracked.includes(utils.phase)) {
