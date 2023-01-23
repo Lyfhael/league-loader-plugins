@@ -4,18 +4,19 @@ let regex_rc_port = /^--riotclient-app-port=([0-9]+)$/
 let phase; // automatically updated to current gameflow phase
 let debug_sub = true // to display debug messages
 let observerCallbacks = [] // array of functions that will be called in MutationObserver API
+let pvp_net_id; // automatically updated to your pvp.net id
+let summoner_id; // automatically updated to your summonerId
 
 /**
  * Subscribe to a specific endpoint, and trigger callback function when that endpoint is called
- * @param {string} endpoint Endpoint you wish to monitor. ex: /lol-gameflow/v1/gameflow-phase
+ * @param {string} endpoint Endpoint you wish to monitor. ex: /lol-gameflow/v1/gameflow-phase , send "" to subscribe to all
  * @param {function} callback The callback function
  */
 async function subscribe_endpoint(endpoint, callback) {
-	const API = endpoint
 	const uri = document.querySelector('link[rel="riot:plugins:websocket"]').href
 	const ws = new WebSocket(uri, 'wamp')
 
-	ws.onopen = () => ws.send(JSON.stringify([5, 'OnJsonApiEvent' + API.replace(/\//g, '_')]))
+	ws.onopen = () => ws.send(JSON.stringify([5, 'OnJsonApiEvent' + endpoint.replace(/\//g, '_')]))
 	ws.onmessage = callback
 }
 
@@ -29,8 +30,14 @@ async function fetch_riotclient_credentials(){
 		console.log(riotclient_auth, riotclient_port)   
 }
 
+/** Callback function to be sent in subscribe_endpoint() to update the variable holding user pvp.net infos */
+let updateUserPvpNetInfos = async message => {let data = JSON.parse(message["data"])[2]["data"]; if (data != undefined) {to_export.pvp_net_id = data["id"]; to_export.summoner_id = data["summonerId"]}}
+
 /** Callback function to be sent in subscribe_endpoint() to update the variable monitoring the gameflow phase */
 let updatePhaseCallback = async message => {phase = JSON.parse(message["data"])[2]["data"];}
+
+/** Callback function to be sent in subscribe_endpoint() to log uri & data object */
+let debugLogEndpoints = async message => {if (debug_sub) console.log(JSON.parse(message["data"])[2]["uri"], JSON.parse(message["data"])[2]["data"])}
 
 /**
  * Add function to be called in the MutationObserver API
@@ -40,17 +47,23 @@ function observerAddCallback(callback) {
 	observerCallbacks.push(callback)
 }
 
-module.exports = {
+let to_export = {
     riotclient_auth: riotclient_auth,
 	riotclient_port: riotclient_port,
 	phase: phase,
+	summoner_id: summoner_id,
+	pvp_net_id: pvp_net_id,
 	subscribe_endpoint: subscribe_endpoint,
 	observerAddCallback: observerAddCallback
 }
 
+module.exports = to_export
+
 window.addEventListener('DOMContentLoaded', () => {
 	fetch_riotclient_credentials()
 	subscribe_endpoint("/lol-gameflow/v1/gameflow-phase", updatePhaseCallback)
+	subscribe_endpoint("/lol-chat/v1/me", updateUserPvpNetInfos)
+	subscribe_endpoint("", debugLogEndpoints)
 	var observer = new MutationObserver(function(mutations) {
 		observerCallbacks.forEach(func => {func()})
 	});
