@@ -1,5 +1,6 @@
 const utils = require('./_utils')
-let auto_accept = false
+let auto_accept = false // determine if it should auto accept matchmaking
+let queue_accepted = false // determine if the queue has been accepted by the script, so to not spam /accept
 
 /** Called upon clicking the Auto Accept button. Enable/Disable queue auto acceptation */
 function autoAcceptQueueButton(){
@@ -19,9 +20,12 @@ window.autoAcceptQueueButton = autoAcceptQueueButton
 /** Called upon Match found. Accept the Matchmaking */
 let autoAcceptCallback = async message => {
 	utils.phase = JSON.parse(message["data"])[2]["data"]
-	if (utils.phase == "ReadyCheck" && auto_accept) {
+	if (utils.phase == "ReadyCheck" && auto_accept && !queue_accepted) {
 		await acceptMatchmaking()
-		utils.phase = "ReadyCheckAccepted"
+		queue_accepted = true
+	}
+	else if (utils.phase != "ReadyCheck") {
+		queue_accepted = false
 	}
 }
 
