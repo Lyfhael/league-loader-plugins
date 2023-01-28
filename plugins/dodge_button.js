@@ -44,13 +44,13 @@ function generateDodgeAndExitButton(siblingDiv) {
 	siblingDiv.parentNode.insertBefore(parentDiv, siblingDiv)
 }
 
-let addDodgeAndExitButtonObserver = () => {
+let addDodgeAndExitButtonObserver = (mutations) => {
 	if (utils.phase == "ChampSelect" && document.querySelector(".bottom-right-buttons") && !document.querySelector(".dodge-button-container")){
 		generateDodgeAndExitButton(document.querySelector(".bottom-right-buttons"))
 	}
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-	utils.observerAddCallback(addDodgeAndExitButtonObserver)
+	utils.observerAddCallback(addDodgeAndExitButtonObserver, ["bottom-right-buttons"])
 	// utils.addCss("//assets/dodge_button.css")
 })
