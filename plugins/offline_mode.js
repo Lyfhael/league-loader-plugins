@@ -1,14 +1,31 @@
 const utils = require('./_utils')
 
-let switch_between_status = async () => {
-	let status = document.querySelector("[availability]").getAttribute("availability")
-	let availability = (status == "chat") ? "dnd" : (status == "dnd") ? "offline" : (status == "offline") ? "chat" : "chat"
+/** return the player availability status */
+function get_status() {
+	let element = document.querySelector(".availability-icon")
+	let possible_status = ["dnd", "chat", "away", "offline", "mobile"]
 
+	if (element) {
+		for (let elem of possible_status){
+			if (element.classList.contains(elem)){
+				return elem
+			}
+		}
+	}
+	/** it shouldn't reach here */
+	return "chat"
+}
+
+let switch_between_status = async () => {
+	let status = get_status()
+	let availability = (status == "chat") ? "mobile" : (status == "mobile") ? "dnd" : (status == "dnd") ? "away" : (status == "away") ? "offline" : (status == "offline") ? "chat" : "chat"
+
+	console.log("pass 1")
 	await fetch("/lol-chat/v1/me", {
 		"headers": {
 			"content-type": "application/json",
 		},
-		"body": `{\"availability\":\"${availability}\"${(availability == "offline") ? `,\"lol\":{\"gameStatus\":\"outOfGame\"}` : ``}}`,
+		"body": `{\"availability\":\"${availability}\"${(availability == "offline" || availability == "away") ? `,\"lol\":{\"gameStatus\":\"outOfGame\"}` : (availability == "dnd") ? `,\"lol\":{\"gameStatus\":\"inGame\"}` : `` }}`,
 		"method": "PUT",
 	});
 	/** replace old status by new one */
@@ -20,22 +37,19 @@ window.switch_between_status = switch_between_status
 
 let availabilityButtonMutationObserver = async (mutations) => {
 	let circle_status = document.querySelector(".availability-hitbox:not(.offline-mode-available)")
-	let message_status = document.querySelector(".status-message:not(.offline)")
-	let status = document.querySelector("[availability]").getAttribute("availability")
+	let custom_message_status = document.querySelector(".details .status-message.game-status")
+	let status = get_status()
 
-	/** remove duplicates */
-	if (circle_status && document.querySelector(".availability-hitbox.offline-mode-available")) {
-		circle_status.remove()
-	}
 	/** if status circle icon is legacy, update it to new one that has new click event */
-	else if (circle_status) {
+	if (circle_status) {
 		console.log(mutations)
 		circle_status.classList.add("offline-mode-available");
 		circle_status.outerHTML = circle_status.outerHTML
 		document.querySelector(".availability-hitbox").addEventListener("click", switch_between_status, false)
 	}
 	/** if status is offline, but message status doesn't match offline status, update it */
-	if (message_status && status == "offline") {		
+	if (custom_message_status && status == "offline") {		
+		console.log("pass 2")
 		await fetch("/lol-chat/v1/me", {
 			"headers": {
 				"content-type": "application/json",
@@ -47,5 +61,5 @@ let availabilityButtonMutationObserver = async (mutations) => {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-	utils.observerAddCallback(availabilityButtonMutationObserver)
+	utils.observerAddCallback(availabilityButtonMutationObserver, ["availability-hitbox", "status-message"])
 })
