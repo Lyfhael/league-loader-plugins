@@ -38,7 +38,7 @@ let autoAcceptMutationObserver = (mutations) => {
 		if (auto_accept){
 			newOption.setAttribute("selected", "");
 		}
-		newOption.innerHTML = "Auto Accept";
+		newOption.innerHTML = "<div class='auto-accept-button-text'>Auto Accept</div>";
 
 		let parentElement = document.querySelector(".v2-footer-notifications.ember-view");
 		parentElement.append(newOption);
