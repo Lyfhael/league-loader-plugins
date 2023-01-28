@@ -36,7 +36,7 @@ let switch_between_status = async () => {
 window.switch_between_status = switch_between_status
 
 let availabilityButtonMutationObserver = async (mutations) => {
-	let circle_status = document.querySelector(".availability-hitbox:not(.offline-mode-available)")
+	let circle_status = document.querySelector(".availability-hitbox:not(.offline-mode-available), .availability-hitbox:not([onclick])")
 	let circle_status_custom = document.querySelectorAll(".availability-hitbox.offline-mode-available")
 	let custom_message_status = document.querySelector(".details .status-message.game-status")
 	let status = get_status()
@@ -46,7 +46,7 @@ let availabilityButtonMutationObserver = async (mutations) => {
 		console.log(mutations)
 		circle_status.classList.add("offline-mode-available");
 		circle_status.outerHTML = circle_status.outerHTML
-		document.querySelector(".availability-hitbox").addEventListener("click", switch_between_status, false)
+		document.querySelector(".availability-hitbox").setAttribute("onclick", "window.switch_between_status()")
 	}
 	/** if status is offline, but message status doesn't match offline status, update it */
 	if (custom_message_status && status == "offline") {		
