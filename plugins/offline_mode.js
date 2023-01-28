@@ -37,6 +37,7 @@ window.switch_between_status = switch_between_status
 
 let availabilityButtonMutationObserver = async (mutations) => {
 	let circle_status = document.querySelector(".availability-hitbox:not(.offline-mode-available)")
+	let circle_status_custom = document.querySelectorAll(".availability-hitbox.offline-mode-available")
 	let custom_message_status = document.querySelector(".details .status-message.game-status")
 	let status = get_status()
 
@@ -57,6 +58,13 @@ let availabilityButtonMutationObserver = async (mutations) => {
 			"body": `{\"availability\":\"${status}\",\"lol\":{\"gameStatus\":\"outOfGame\"}}`,
 			"method": "PUT",
 		});
+	}
+	if (circle_status_custom.length > 1){
+		circle_status_custom.forEach((elem, index) => {
+			if (index){
+				elem.remove()
+			}
+		})
 	}
 }
 
