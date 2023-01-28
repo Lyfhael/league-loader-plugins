@@ -1,4 +1,5 @@
 const utils = require('./_utils')
+let covert_status = "chat";
 
 /** return the player availability status */
 function get_status() {
@@ -31,15 +32,33 @@ let switch_between_status = async () => {
 	/** replace old status by new one */
 	document.querySelector(".availability-icon").classList.remove(status)
 	document.querySelector(".availability-icon").classList.add(availability)
+	covert_status = availability
 }
 
 window.switch_between_status = switch_between_status
+
+/** fix status when in champ select / game */
+async function patchStatus(){
+	await fetch("/lol-chat/v1/me", {
+		"headers": {
+			"content-type": "application/json",
+		},
+		"body": `{\"availability\":\"${covert_status}\",\"lol\":{\"gameStatus\":\"outOfGame\"}}`,
+		"method": "PUT",
+	});
+}
+
+let champSelectPatchStatus = async message => {
+	let phase = JSON.parse(message["data"])[2]["data"];
+	if (phase == "ChampSelect" && (covert_status == "offline" || covert_status == "away")) {
+		await patchStatus()
+	}
+}
 
 let availabilityButtonMutationObserver = async (mutations) => {
 	let circle_status = document.querySelector(".availability-hitbox:not(.offline-mode-available), .availability-hitbox:not([onclick])")
 	let circle_status_custom = document.querySelectorAll(".availability-hitbox.offline-mode-available")
 	let custom_message_status = document.querySelector(".details .status-message.game-status")
-	let status = get_status()
 
 	/** if status circle icon is legacy, update it to new one that has new click event */
 	if (circle_status) {
@@ -49,15 +68,8 @@ let availabilityButtonMutationObserver = async (mutations) => {
 		document.querySelector(".availability-hitbox").setAttribute("onclick", "window.switch_between_status()")
 	}
 	/** if status is offline, but message status doesn't match offline status, update it */
-	if (custom_message_status && status == "offline") {		
-		console.log("pass 2")
-		await fetch("/lol-chat/v1/me", {
-			"headers": {
-				"content-type": "application/json",
-			},
-			"body": `{\"availability\":\"${status}\",\"lol\":{\"gameStatus\":\"outOfGame\"}}`,
-			"method": "PUT",
-		});
+	if (custom_message_status && covert_status == "offline") {		
+		await patchStatus();
 	}
 	if (circle_status_custom.length > 1){
 		circle_status_custom.forEach((elem, index) => {
@@ -69,5 +81,6 @@ let availabilityButtonMutationObserver = async (mutations) => {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+	utils.subscribe_endpoint("/lol-gameflow/v1/gameflow-phase", champSelectPatchStatus)
 	utils.observerAddCallback(availabilityButtonMutationObserver, ["availability-hitbox", "status-message"])
 })
