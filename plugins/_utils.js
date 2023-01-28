@@ -84,5 +84,5 @@ window.addEventListener('DOMContentLoaded', () => {
 		routines.forEach(routine => {
 			routine.callback()
 		})
-	},200)
+	},1300)
 })
