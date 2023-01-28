@@ -3,7 +3,7 @@ let set_timeout_player_joined; // id of setTimeout that will trigger the send_me
 let pvp_net_room_id; // chat room id
 let regex1 = /\/lol-chat\/v1\/conversations\/.+\/messages\/.+/
 let regex2 = /(?:\/lol-chat\/v1\/conversations\/)(.+)(?:\/messages\/.+)/
-let message_to_send = "https://twitch-tools.lolarchiver.com"
+let message_to_send = "I am Ariane, a sublime and cringey AI-powered e-girl <3 You can interact with me through the command /ariane :D"
 let message_sent = false;  // determine whether or not the message has been sent in the lobby, so to not spam it
 let message_sent_phase; // stores previous phase state
 
@@ -25,7 +25,8 @@ async function send_message_in_lobby(message) {
 /** Called upon connecting to a lobby with other users(champ-select, post game lobby, etc). */
 let sendMessageUponArrivingLobby = async message => {
 	const data = JSON.parse(message.data)
-	const phasesTracked = ["ChampSelect", "EndOfGame", "PreEndOfGame", "WaitingForStats"]
+	const phasesTracked = ["ChampSelect", "PreEndOfGame"]
+	// const phasesTracked = ["ChampSelect", "EndOfGame", "PreEndOfGame", "WaitingForStats"]
 	if (utils.debug_sub)
 		console.log(utils.phase, utils.pvp_net_id, utils.summoner_id, pvp_net_room_id)
 
