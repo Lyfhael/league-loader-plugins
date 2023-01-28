@@ -2,17 +2,25 @@ let riotclient_auth, riotclient_port;
 let regex_rc_auth = /^--riotclient-auth-token=(.+)$/
 let regex_rc_port = /^--riotclient-app-port=([0-9]+)$/
 let phase; // automatically updated to current gameflow phase
-let debug_sub = false // to display debug messages
-let observerCallbacks = [] // array of functions that will be called in MutationObserver API
+let debug_sub = true // to display debug messages
+let routines = [] // array of functions that will be called in MutationObserver API
 let pvp_net_id; // automatically updated to your pvp.net id
 let summoner_id; // automatically updated to your summonerId
+
+/** used to add css files to document body */
+function addCss(filename) {
+	const style = document.createElement('link')
+	style.href = filename
+	style.type = 'text/css'
+	style.rel = 'stylesheet'
+	document.body.append(style)
+}
 
 /**
  * Subscribe to a specific endpoint, and trigger callback function when that endpoint is called
  * @param {string} endpoint Endpoint you wish to monitor. ex: /lol-gameflow/v1/gameflow-phase , send "" to subscribe to all
  * @param {function} callback The callback function
  */
-
 async function subscribe_endpoint(endpoint, callback) {
 	const uri = document.querySelector('link[rel="riot:plugins:websocket"]').href
 	const ws = new WebSocket(uri, 'wamp')
@@ -48,9 +56,10 @@ let debugLogEndpoints = async message => {if (debug_sub) console.log(JSON.parse(
 /**
  * Add function to be called in the MutationObserver API
  * @param {function} callback The callback function
+ * @param {[string]} target The list of class targets
  */
-function observerAddCallback(callback) {
-	observerCallbacks.push(callback)
+function observerAddCallback(callback, target) {
+	routines.push({"callback": callback, "target": target})
 }
 
 let to_export = {
@@ -60,7 +69,8 @@ let to_export = {
 	summoner_id: summoner_id,
 	pvp_net_id: pvp_net_id,
 	subscribe_endpoint: subscribe_endpoint,
-	observerAddCallback: observerAddCallback
+	observerAddCallback: observerAddCallback,
+	addCss: addCss
 }
 
 module.exports = to_export
@@ -70,8 +80,9 @@ window.addEventListener('DOMContentLoaded', () => {
 	subscribe_endpoint("/lol-gameflow/v1/gameflow-phase", updatePhaseCallback)
 	subscribe_endpoint("/lol-chat/v1/me", updateUserPvpNetInfos)
 	subscribe_endpoint("", debugLogEndpoints)
-	var observer = new MutationObserver(function(mutations) {
-		observerCallbacks.forEach(func => {func()})
-	});
-	observer.observe(document, {childList: true, subtree:true});
+	window.setInterval(() =>{
+		routines.forEach(routine => {
+			routine.callback()
+		})
+	},200)
 })
