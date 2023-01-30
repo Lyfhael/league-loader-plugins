@@ -82,5 +82,5 @@ let availabilityButtonMutationObserver = async (mutations) => {
 
 window.addEventListener('DOMContentLoaded', () => {
 	utils.subscribe_endpoint("/lol-gameflow/v1/gameflow-phase", champSelectPatchStatus)
-	utils.observerAddCallback(availabilityButtonMutationObserver, ["availability-hitbox", "status-message"])
+	utils.routineAddCallback(availabilityButtonMutationObserver, ["availability-hitbox", "status-message"])
 })
