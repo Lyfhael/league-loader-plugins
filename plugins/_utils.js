@@ -31,28 +31,29 @@ async function subscribe_endpoint(endpoint, callback) {
 }
 
 /** fetch the Riot client API port/auth and save it to variables that can be exported */
-async function fetch_riotclient_credentials(){
+async function fetch_riotclient_credentials() {
 	await fetch("/riotclient/command-line-args", {
 		"method": "GET",
-	}).then(response=>response.json()).then(data=>{data.forEach(elem => {
-		if (regex_rc_auth.exec(elem))
-			to_export.riotclient_auth = regex_rc_auth.exec(elem)[1];
-		else if (regex_rc_port.exec(elem))
-			to_export.riotclient_port = regex_rc_port.exec(elem)[1];
+	}).then(response => response.json()).then(data => {
+		data.forEach(elem => {
+			if (regex_rc_auth.exec(elem))
+				to_export.riotclient_auth = regex_rc_auth.exec(elem)[1];
+			else if (regex_rc_port.exec(elem))
+				to_export.riotclient_port = regex_rc_port.exec(elem)[1];
 		});
 	})
 	if (debug_sub)
-		console.log(to_export.riotclient_auth, to_export.riotclient_port)   
+		console.log(to_export.riotclient_auth, to_export.riotclient_port)
 }
 
 /** Callback function to be sent in subscribe_endpoint() to update the variable holding user pvp.net infos */
-let updateUserPvpNetInfos = async message => {let data = JSON.parse(message["data"])[2]["data"]; if (data != undefined) {to_export.pvp_net_id = data["id"]; to_export.summoner_id = data["summonerId"]}}
+let updateUserPvpNetInfos = async message => { let data = JSON.parse(message["data"])[2]["data"]; if (data != undefined) { to_export.pvp_net_id = data["id"]; to_export.summoner_id = data["summonerId"] } }
 
 /** Callback function to be sent in subscribe_endpoint() to update the variable monitoring the gameflow phase */
-let updatePhaseCallback = async message => {phase = JSON.parse(message["data"])[2]["data"];}
+let updatePhaseCallback = async message => { phase = JSON.parse(message["data"])[2]["data"]; }
 
 /** Callback function to be sent in subscribe_endpoint() to log uri & data object */
-let debugLogEndpoints = async message => {if (debug_sub) console.log(JSON.parse(message["data"])[2]["uri"], JSON.parse(message["data"])[2]["data"])}
+let debugLogEndpoints = async message => { if (debug_sub) console.log(JSON.parse(message["data"])[2]["uri"], JSON.parse(message["data"])[2]["data"]) }
 
 /**
  * Add function to be called in the MutationObserver API
@@ -60,22 +61,22 @@ let debugLogEndpoints = async message => {if (debug_sub) console.log(JSON.parse(
  * @param {[string]} targets The list of class targets
  */
 function routineAddCallback(callback, target) {
-	routines.push({"callback": callback, "targets": target})
+	routines.push({ "callback": callback, "targets": target })
 }
 
 function mutationObserverAddCallback(callback, target) {
-	mutationCallbacks.push({"callback": callback, "targets": target})
+	mutationCallbacks.push({ "callback": callback, "targets": target })
 }
 
 let to_export = {
-    riotclient_auth: riotclient_auth,
+	riotclient_auth: riotclient_auth,
 	riotclient_port: riotclient_port,
 	phase: phase,
 	summoner_id: summoner_id,
 	pvp_net_id: pvp_net_id,
 	subscribe_endpoint: subscribe_endpoint,
 	routineAddCallback: routineAddCallback,
-	mutationObserverAddCallback : mutationObserverAddCallback,
+	mutationObserverAddCallback: mutationObserverAddCallback,
 	addCss: addCss
 }
 
@@ -86,19 +87,19 @@ window.addEventListener('DOMContentLoaded', () => {
 	subscribe_endpoint("/lol-gameflow/v1/gameflow-phase", updatePhaseCallback)
 	subscribe_endpoint("/lol-chat/v1/me", updateUserPvpNetInfos)
 	subscribe_endpoint("", debugLogEndpoints)
-	window.setInterval(() =>{
+	window.setInterval(() => {
 		routines.forEach(routine => {
 			routine.callback()
 		})
-	},1300)
+	}, 1300)
 
 	const observer = new MutationObserver((mutationsList) => {
-		for(let mutation of mutationsList) {
-			for(let addedNode of mutation.addedNodes) {
-				if (addedNode.classList){
-					for (let addedNodeClass of addedNode.classList){
+		for (let mutation of mutationsList) {
+			for (let addedNode of mutation.addedNodes) {
+				if (addedNode.classList) {
+					for (let addedNodeClass of addedNode.classList) {
 						for (let obj of mutationCallbacks) {
-							if (addedNodeClass in obj.targets || "*" in obj.targets) {
+							if (obj.targets.indexOf(addedNodeClass) != -1 || "*" in obj.targets) {
 								obj.callback(addedNode)
 							}
 						}
@@ -107,5 +108,5 @@ window.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 	});
-	observer.observe(document, {attributes: false, childList: true, subtree: true});
+	observer.observe(document, { attributes: false, childList: true, subtree: true });
 })
