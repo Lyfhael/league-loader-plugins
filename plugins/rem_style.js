@@ -50,7 +50,7 @@ var nodeRemovedEvent = function (event) {
 		let viewportRoot = document.getElementById("rcp-fe-viewport-root")
 
 		viewportRoot.style.filter = "none"
-		retroremBg.style.filter = "none"
+		retroremBg.style.filter = "brightness(0.4) saturate(0.8)"
 		document.removeEventListener("DOMNodeRemoved", nodeRemovedEvent);
 		// monitorPage()
 	}
