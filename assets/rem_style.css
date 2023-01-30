@@ -44,7 +44,7 @@ lol-uikit-navigation-item[item-id="lunar-revel-embed-2023"] {
 }
 
 .navigation-root-component.ember-view {
-	background: linear-gradient(rgb(64 63 63), rgb(0 0 0 / 6%))!important;
+	background: linear-gradient(rgb(0 0 0), rgb(0 0 0 / 24%))!important
 }
 
 .alpha-version-panel {
@@ -262,4 +262,12 @@ html {
 
 .clash-tab-team-background, .clash-tab-bracket-background, .tournament-scouting, .clash-missed-lockin-modal, .clash-root-background-landing, .clash-root-background {
 	background-image: none!important
+}
+
+div[data-screen-name="rcp-fe-lol-home"] .rcp-fe-lol-home-sub-nav {
+	margin-top: 10px;
+    padding-bottom: 10px;
+    background-color: #000000ad;
+    border-radius: 10px;
+    border: 2px solid var(--default-color, #cdbe91);
 }
