@@ -51,6 +51,6 @@ let addDodgeAndExitButtonObserver = (mutations) => {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-	utils.observerAddCallback(addDodgeAndExitButtonObserver, ["bottom-right-buttons"])
+	utils.routineAddCallback(addDodgeAndExitButtonObserver, ["bottom-right-buttons"])
 	// utils.addCss("//assets/dodge_button.css")
 })
