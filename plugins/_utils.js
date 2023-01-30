@@ -2,8 +2,9 @@ let riotclient_auth, riotclient_port;
 let regex_rc_auth = /^--riotclient-auth-token=(.+)$/
 let regex_rc_port = /^--riotclient-app-port=([0-9]+)$/
 let phase; // automatically updated to current gameflow phase
-let debug_sub = false // to display debug messages
-let routines = [] // array of functions that will be called in MutationObserver API
+let debug_sub = true // to display debug messages
+let routines = [] // array of functions that will be called routinely
+let mutationCallbacks = [] // array of functions that will be called in mutation observer
 let pvp_net_id; // automatically updated to your pvp.net id
 let summoner_id; // automatically updated to your summonerId
 
@@ -56,10 +57,14 @@ let debugLogEndpoints = async message => {if (debug_sub) console.log(JSON.parse(
 /**
  * Add function to be called in the MutationObserver API
  * @param {function} callback The callback function
- * @param {[string]} target The list of class targets
+ * @param {[string]} targets The list of class targets
  */
-function observerAddCallback(callback, target) {
-	routines.push({"callback": callback, "target": target})
+function routineAddCallback(callback, target) {
+	routines.push({"callback": callback, "targets": target})
+}
+
+function mutationObserverAddCallback(callback, target) {
+	mutationCallbacks.push({"callback": callback, "targets": target})
 }
 
 let to_export = {
@@ -69,7 +74,8 @@ let to_export = {
 	summoner_id: summoner_id,
 	pvp_net_id: pvp_net_id,
 	subscribe_endpoint: subscribe_endpoint,
-	observerAddCallback: observerAddCallback,
+	routineAddCallback: routineAddCallback,
+	mutationObserverAddCallback : mutationObserverAddCallback,
 	addCss: addCss
 }
 
@@ -85,4 +91,21 @@ window.addEventListener('DOMContentLoaded', () => {
 			routine.callback()
 		})
 	},1300)
+
+	const observer = new MutationObserver((mutationsList) => {
+		for(let mutation of mutationsList) {
+			for(let addedNode of mutation.addedNodes) {
+				if (addedNode.classList){
+					for (let addedNodeClass of addedNode.classList){
+						for (let obj of mutationCallbacks) {
+							if (addedNodeClass in obj.targets || "*" in obj.targets) {
+								obj.callback(addedNode)
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+	observer.observe(document, {attributes: false, childList: true, subtree: true});
 })
