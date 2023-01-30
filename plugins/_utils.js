@@ -2,7 +2,7 @@ let riotclient_auth, riotclient_port;
 let regex_rc_auth = /^--riotclient-auth-token=(.+)$/
 let regex_rc_port = /^--riotclient-app-port=([0-9]+)$/
 let phase; // automatically updated to current gameflow phase
-let debug_sub = true // to display debug messages
+let debug_sub = false // to display debug messages
 let routines = [] // array of functions that will be called routinely
 let mutationCallbacks = [] // array of functions that will be called in mutation observer
 let pvp_net_id; // automatically updated to your pvp.net id
@@ -96,7 +96,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	const observer = new MutationObserver((mutationsList) => {
 		for (let mutation of mutationsList) {
 			for (let addedNode of mutation.addedNodes) {
-				if (addedNode.classList) {
+				if (addedNode.nodeType === Node.ELEMENT_NODE && addedNode.classList) {
 					for (let addedNodeClass of addedNode.classList) {
 						for (let obj of mutationCallbacks) {
 							if (obj.targets.indexOf(addedNodeClass) != -1 || "*" in obj.targets) {
