@@ -29,7 +29,7 @@ let autoAcceptCallback = async message => {
 	}
 }
 
-/** Callback function to be sent in observerAddCallback(). Will create the Auto Accept button */
+/** Callback function to be sent in routineAddCallback(). Will create the Auto Accept button */
 let autoAcceptMutationObserver = (mutations) => {
 	if (document.querySelector(".v2-footer-notifications.ember-view") != null && document.getElementById("autoAcceptQueueButton") == null) {
 		let newOption = document.createElement("lol-uikit-radio-input-option");
@@ -47,7 +47,7 @@ let autoAcceptMutationObserver = (mutations) => {
 
 window.addEventListener('DOMContentLoaded', () => {
 	utils.subscribe_endpoint('/lol-gameflow/v1/gameflow-phase', autoAcceptCallback)
-	utils.observerAddCallback(autoAcceptMutationObserver, ["v2-footer-notifications.ember-view"])
+	utils.routineAddCallback(autoAcceptMutationObserver, ["v2-footer-notifications.ember-view"])
 })
 
 let acceptMatchmaking = async () => await fetch('/lol-matchmaking/v1/ready-check/accept', { method: 'POST' })
