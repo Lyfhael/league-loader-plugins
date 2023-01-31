@@ -99,7 +99,7 @@ let pageChangeMutation = (node) => {
 		document.getElementById("retrorem-bg").style.filter = 'brightness(0.7) saturate(0.8)';
 	}
 	if (pagename == "rcp-fe-lol-loot") {
-		document.getElementById("retrorem-bg").style.filter = 'brightness(0.7) saturate(0.8)';
+		document.getElementById("retrorem-bg").style.filter = 'brightness(0.3)';
 	}
 	else if (previous_page == "rcp-fe-lol-loot" && brightness_modifiers.indexOf(pagename) == -1) {
 		document.getElementById("retrorem-bg").style.filter = 'brightness(0.7) saturate(0.8)';
@@ -176,6 +176,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
 		if (phase == "GameStart" || phase == "InProgress") {
 			document.getElementById("retrorem-bg").style.filter = 'blur(10px) brightness(0.4) saturate(1.5)';
+			document.getElementById("retrorem-bg").pause()
+		}
+		else {
+			document.getElementById("retrorem-bg").start()
 		}
 	})
 })
