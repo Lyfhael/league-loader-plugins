@@ -50,7 +50,7 @@ var nodeRemovedEvent = function (event) {
 		let viewportRoot = document.getElementById("rcp-fe-viewport-root")
 
 		viewportRoot.style.filter = "none"
-		retroremBg.style.filter = "brightness(0.4) saturate(0.8)"
+		retroremBg.style.filter = "brightness(0.7) saturate(0.8)"
 		document.removeEventListener("DOMNodeRemoved", nodeRemovedEvent);
 		// monitorPage()
 	}
@@ -90,31 +90,31 @@ let pageChangeMutation = (node) => {
 		document.getElementById("retrorem-bg").style.filter = 'blur(3px) brightness(0.4) saturate(1.5)';
 	}
 	else if (previous_page == "rcp-fe-lol-champ-select" && brightness_modifiers.indexOf(pagename) == -1) {
-		document.getElementById("retrorem-bg").style.filter = 'brightness(0.3)';
+		document.getElementById("retrorem-bg").style.filter = 'brightness(0.7) saturate(0.8)';
 	}
 	if (pagename == "rcp-fe-lol-clash-full") {
 		document.getElementById("retrorem-bg").style.filter = 'blur(10px) brightness(0.2)';
 	}
 	else if (previous_page == "rcp-fe-lol-clash-full" && brightness_modifiers.indexOf(pagename) == -1) {
-		document.getElementById("retrorem-bg").style.filter = 'brightness(0.3)';
+		document.getElementById("retrorem-bg").style.filter = 'brightness(0.7) saturate(0.8)';
 	}
 	if (pagename == "rcp-fe-lol-loot") {
-		document.getElementById("retrorem-bg").style.filter = 'brightness(0.3)';
+		document.getElementById("retrorem-bg").style.filter = 'brightness(0.7) saturate(0.8)';
 	}
 	else if (previous_page == "rcp-fe-lol-loot" && brightness_modifiers.indexOf(pagename) == -1) {
-		document.getElementById("retrorem-bg").style.filter = 'brightness(0.3)';
+		document.getElementById("retrorem-bg").style.filter = 'brightness(0.7) saturate(0.8)';
 	}
 	if (pagename == "rcp-fe-lol-store") {
 		document.getElementById("retrorem-bg").style.filter = 'brightness(0.2)';
 	}
 	else if (previous_page == "rcp-fe-lol-store" && brightness_modifiers.indexOf(pagename) == -1) {
-		document.getElementById("retrorem-bg").style.filter = 'brightness(0.3)';
+		document.getElementById("retrorem-bg").style.filter = 'brightness(0.7) saturate(0.8)';
 	}
 	if (pagename == "rcp-fe-lol-collections") {
 		document.getElementById("retrorem-bg").style.filter = 'brightness(0.2)';
 	}
 	else if (previous_page == "rcp-fe-lol-collections" && brightness_modifiers.indexOf(pagename) == -1) {
-		document.getElementById("retrorem-bg").style.filter = 'brightness(0.3)';
+		document.getElementById("retrorem-bg").style.filter = 'brightness(0.7) saturate(0.8)';
 	}
 	if (pagename == "rcp-fe-lol-profiles-main") {
 		let rankedNode = document.querySelector('[section-id="profile_subsection_leagues"]')
@@ -141,7 +141,7 @@ let pageChangeMutation = (node) => {
 	}
 	else if (previous_page == "rcp-fe-lol-profiles-main") {
 		if  (brightness_modifiers.indexOf(pagename) == -1)
-			document.getElementById("retrorem-bg").style.filter = 'brightness(0.3)';
+			document.getElementById("retrorem-bg").style.filter = 'brightness(0.7) saturate(0.8)';
 		if (ranked_observer)
 			ranked_observer.disconnect()
 		ranked_observer = undefined
@@ -150,7 +150,7 @@ let pageChangeMutation = (node) => {
 		document.getElementById("retrorem-bg").style.filter = 'brightness(0.4) blur(6px)';
 	}
 	else if (previous_page == "rcp-fe-lol-parties" && brightness_modifiers.indexOf(pagename) == -1) {
-		document.getElementById("retrorem-bg").style.filter = 'brightness(0.3)';
+		document.getElementById("retrorem-bg").style.filter = 'brightness(0.7) saturate(0.8)';
 	}
 	if (previous_page != pagename)
 		previous_page = pagename
