@@ -3,6 +3,24 @@ let previous_page;
 let ranked_observer;
 let force_bg_pause = false;
 let wallpapers = ["Retrorem.webm", "Retrorem2.webm"]
+let bg_filters = {
+	"rcp-fe-lol-champ-select": {"Retrorem.webm": 'blur(3px) brightness(0.4) saturate(1.5)',
+								"Retrorem2.webm": 'blur(3px) brightness(0.4) saturate(1.5)'},
+	"rcp-fe-lol-clash-full": {"Retrorem.webm": 'blur(10px) brightness(0.2)',
+							  "Retrorem2.webm": 'blur(10px) brightness(0.2)'},
+	"rcp-fe-lol-loot": {"Retrorem.webm": 'brightness(0.3)',
+						"Retrorem2.webm": 'brightness(0.3)'},
+	"rcp-fe-lol-store": {"Retrorem.webm": 'brightness(0.2)',
+						 "Retrorem2.webm": 'brightness(0.45) saturate(0.5) blur(5px)'},
+	"rcp-fe-lol-collections": {"Retrorem.webm": 'brightness(0.2)',
+							   "Retrorem2.webm": 'brightness(0.2)'},
+	"rcp-fe-lol-profiles-main": {"Retrorem.webm": 'brightness(0.3)',
+								 "Retrorem2.webm": 'brightness(0.3)'},
+	"rcp-fe-lol-parties": {"Retrorem.webm": 'brightness(0.4) blur(6px)',
+						   "Retrorem2.webm": 'brightness(0.4) blur(6px)'},
+	"default": {"Retrorem.webm": 'brightness(0.7) saturate(0.8)',
+				"Retrorem2.webm": 'none'},
+}
 
 function removeIframe() {
 	const observer = new MutationObserver(mutations => {
@@ -103,7 +121,16 @@ function play_pause_set_icon(elem) {
 }
 
 function next_wallpaper() {
-
+	let retroremBg = document.getElementById("retrorem-bg")
+	document.querySelector(":root").classList.remove(wallpapers[0].replace(/\.[a-zA-Z]+$/, '-vars'))
+	retroremBg.classList.add("webm-hidden");
+	wallpapers.push(wallpapers.shift())
+	document.querySelector(":root").classList.add(wallpapers[0].replace(/\.[a-zA-Z]+$/, '-vars'))
+	setTimeout(function () {
+		retroremBg.src = `//assets/${wallpapers[0]}`
+		retrorem_play_pause()
+		retroremBg.classList.remove("webm-hidden");
+	}, 500);
 }
 
 function create_webm_buttons() {
@@ -127,15 +154,7 @@ function create_webm_buttons() {
 	})
 
 	nextBg.addEventListener("click", () => {
-		let retroremBg = document.getElementById("retrorem-bg")
-
-		retroremBg.classList.add("webm-hidden");
-		wallpapers.push(wallpapers.shift())
-		setTimeout(function () {
-			retroremBg.src = `//assets/${wallpapers[0]}`
-			retrorem_play_pause()
-			retroremBg.classList.remove("webm-hidden");
-		}, 500);
+		next_wallpaper()
 	})
 
 	nextBgIcon.setAttribute("src", "//assets/next_button.png")
@@ -168,34 +187,34 @@ let pageChangeMutation = (node) => {
 		return;
 	}
 	if (pagename == "rcp-fe-lol-champ-select") {
-		retrorem_bg_elem.style.filter = 'blur(3px) brightness(0.4) saturate(1.5)';
+		retrorem_bg_elem.style.filter = bg_filters["rcp-fe-lol-champ-select"][wallpapers[0]];
 	}
 	else if (previous_page == "rcp-fe-lol-champ-select" && brightness_modifiers.indexOf(pagename) == -1) {
-		retrorem_bg_elem.style.filter = 'brightness(0.7) saturate(0.8)';
+		retrorem_bg_elem.style.filter = retrorem_bg_elem.style.filter = bg_filters["default"][wallpapers[0]];
 	}
 	if (pagename == "rcp-fe-lol-clash-full") {
-		retrorem_bg_elem.style.filter = 'blur(10px) brightness(0.2)';
+		retrorem_bg_elem.style.filter = retrorem_bg_elem.style.filter = bg_filters["rcp-fe-lol-clash-full"][wallpapers[0]];
 	}
 	else if (previous_page == "rcp-fe-lol-clash-full" && brightness_modifiers.indexOf(pagename) == -1) {
-		retrorem_bg_elem.style.filter = 'brightness(0.7) saturate(0.8)';
+		retrorem_bg_elem.style.filter = bg_filters["default"][wallpapers[0]];
 	}
 	if (pagename == "rcp-fe-lol-loot") {
-		retrorem_bg_elem.style.filter = 'brightness(0.3)';
+		retrorem_bg_elem.style.filter = bg_filters["rcp-fe-lol-loot"][wallpapers[0]];
 	}
 	else if (previous_page == "rcp-fe-lol-loot" && brightness_modifiers.indexOf(pagename) == -1) {
-		retrorem_bg_elem.style.filter = 'brightness(0.7) saturate(0.8)';
+		retrorem_bg_elem.style.filter = bg_filters["default"][wallpapers[0]];
 	}
 	if (pagename == "rcp-fe-lol-store") {
-		retrorem_bg_elem.style.filter = 'brightness(0.2)';
+		retrorem_bg_elem.style.filter = bg_filters["rcp-fe-lol-store"][wallpapers[0]];
 	}
 	else if (previous_page == "rcp-fe-lol-store" && brightness_modifiers.indexOf(pagename) == -1) {
-		retrorem_bg_elem.style.filter = 'brightness(0.7) saturate(0.8)';
+		retrorem_bg_elem.style.filter = bg_filters["default"][wallpapers[0]];
 	}
 	if (pagename == "rcp-fe-lol-collections") {
-		retrorem_bg_elem.style.filter = 'brightness(0.2)';
+		retrorem_bg_elem.style.filter = bg_filters["rcp-fe-lol-collections"][wallpapers[0]];
 	}
 	else if (previous_page == "rcp-fe-lol-collections" && brightness_modifiers.indexOf(pagename) == -1) {
-		retrorem_bg_elem.style.filter = 'brightness(0.7) saturate(0.8)';
+		retrorem_bg_elem.style.filter = bg_filters["default"][wallpapers[0]];
 	}
 	if (pagename == "rcp-fe-lol-profiles-main") {
 		let rankedNode = document.querySelector('[section-id="profile_subsection_leagues"]')
@@ -218,20 +237,20 @@ let pageChangeMutation = (node) => {
 			});
 			ranked_observer.observe(document.querySelector('[section-id="profile_subsection_leagues"]'), { attributes: true, childList: false, subtree: false });
 		}
-		retrorem_bg_elem.style.filter = 'brightness(0.3)';
+		retrorem_bg_elem.style.filter = bg_filters["rcp-fe-lol-profiles-main"][wallpapers[0]];
 	}
 	else if (previous_page == "rcp-fe-lol-profiles-main") {
 		if (brightness_modifiers.indexOf(pagename) == -1)
-			retrorem_bg_elem.style.filter = 'brightness(0.7) saturate(0.8)';
+			retrorem_bg_elem.style.filter = bg_filters["default"][wallpapers[0]];
 		if (ranked_observer)
 			ranked_observer.disconnect()
 		ranked_observer = undefined
 	}
 	if (pagename == "rcp-fe-lol-parties") {
-		retrorem_bg_elem.style.filter = 'brightness(0.4) blur(6px)';
+		retrorem_bg_elem.style.filter = bg_filters["rcp-fe-lol-parties"][wallpapers[0]];
 	}
 	else if (previous_page == "rcp-fe-lol-parties" && brightness_modifiers.indexOf(pagename) == -1) {
-		retrorem_bg_elem.style.filter = 'brightness(0.7) saturate(0.8)';
+		retrorem_bg_elem.style.filter = bg_filters["default"][wallpapers[0]];
 	}
 	if (previous_page != pagename)
 		previous_page = pagename
