@@ -1,5 +1,9 @@
 Plug-ins to use in https://github.com/nomi-san/league-loader
 
-_utils.js is mandatory if you are to use any of the plug-ins in this repository
+# How to install the plug-ins/themes
 
-plugins/config folder is recommended (mandatory for auto accept button)
+First of all, everything in the `utils (MANDATORY)` folder is mandatory. You install it the same way you install plug-ins, which is described below.
+
+In League-Loader you have two folders : `plugins` / `assets`
+
+Each folder in this repository represent either a plugin or a theme. Take the one you want, copy `everything` in the plugins folder inside it, paste it in your League-Loader plugins folder. Then copy everything from the `assets` folder and paste it in your League-Loader assets folder.
