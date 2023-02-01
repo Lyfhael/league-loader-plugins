@@ -270,7 +270,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	utils.subscribe_endpoint("/lol-gameflow/v1/gameflow-phase", updateLobbyRegaliaBanner)
 	utils.addCss("//assets/rem_style.css")
 	document.querySelector("body").prepend(video)
-	removeIframe()
+	//removeIframe()
 	utils.subscribe_endpoint('/lol-gameflow/v1/gameflow-phase', (message) => {
 		let phase = JSON.parse(message["data"])[2]["data"]
 
