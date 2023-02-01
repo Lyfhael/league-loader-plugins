@@ -163,7 +163,11 @@ lol-uikit-navigation-item > .section::after {
 	background: #0000007a;
 }
 
-.lol-uikit-video-content {
+.league-logo video.lol-uikit-video-content {
+	opacity:0.86;
+}
+
+#background-ambient {
 	filter: var(--store-backdrop-filter-retrorem, opacity(0.5) hue-rotate(45deg));
 }
 
