@@ -3,6 +3,8 @@
 	height: 100%;
 	position: absolute;
     pointer-events: none;
+	transition: opacity 0.5s ease-in-out;
+	opacity: 1;
 	filter: blur(10px) brightness(0.4) saturate(1.5)
 }
 
@@ -270,4 +272,59 @@ div[data-screen-name="rcp-fe-lol-home"] .rcp-fe-lol-home-sub-nav {
     background-color: #000000ad;
     border-radius: 10px;
     border: 2px solid var(--default-color, #cdbe91);
+}
+
+.webm-bottom-buttons-container {
+	display: flex;
+    bottom: 9px;
+    left: 20px;
+	position:absolute
+}
+
+#pause-bg {
+    position: relative;
+    border: 2px solid #8c8263;
+    border-radius: 50%;
+    width: 21px;
+    background-color: black;
+    height: 21px;
+    cursor: pointer;
+}
+
+#pause-bg:hover {
+	filter: brightness(1.3) hue-rotate(263deg) saturate(0.4);
+}
+
+.pause-bg-icon {
+	width: 17px;
+    margin-left: 2px;
+    margin-top: 2px;
+}
+
+#next-bg {
+    position: relative;
+    width: 21px;
+    height: 21px;
+    cursor: pointer;
+}
+
+.next-bg-icon {
+    width: 25px;
+    margin-left: 0px;
+    margin-top: -0.4px;
+}
+
+.next-bg-icon:hover {
+	filter: hue-rotate(0deg) drop-shadow(2px 4px 6px pink)
+}
+
+div[class="vng-age-rating ember-view"] {
+    display: none!important;
+}
+div[class="loot-backdrop background-static"] {
+    background: none !important;
+}
+
+.webm-hidden {
+	opacity: 0!important
 }
