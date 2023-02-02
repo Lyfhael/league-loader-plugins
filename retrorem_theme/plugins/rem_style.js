@@ -1,7 +1,8 @@
 const utils = require('./_utils')
+let default_settings = require('./configs/rem_style_config.json') // default settings for wallpapers (should or not be animated, default wallpaper etc)
 let previous_page;
 let ranked_observer;
-let force_bg_pause = false;
+let force_bg_pause = default_settings["default_animated"];
 let wallpapers = ["Retrorem.webm", "Retrorem2.webm"]
 let bg_filters = {
 	"rcp-fe-lol-champ-select": {"Retrorem.webm": 'blur(3px) brightness(0.4) saturate(1.5)',
@@ -21,6 +22,17 @@ let bg_filters = {
 	"default": {"Retrorem.webm": 'brightness(0.7) saturate(0.8)',
 				"Retrorem2.webm": 'none'},
 }
+
+function apply_default_background() {
+	let default_wallpaper = default_settings["default_wallpaper"]
+	let index = wallpapers.indexOf(default_wallpaper);
+	if (index !== -1) {
+		wallpapers.splice(index, 1);
+		wallpapers.unshift(default_wallpaper);
+	}
+}
+
+apply_default_background()
 
 function removeIframe() {
 	const observer = new MutationObserver(mutations => {
@@ -131,6 +143,31 @@ function next_wallpaper() {
 		retrorem_play_pause()
 		retroremBg.classList.remove("webm-hidden");
 	}, 500);
+}
+
+function create_audio_element() {
+	const audioElement = document.createElement("audio");
+	audioElement.controls = true;
+	audioElement.autoplay = true;
+	audioElement.muted = !default_settings["default_sound_autoplay"];
+	audioElement.volume = 0;
+	audioElement.style.display = "none";
+
+	const sourceElement = document.createElement("source");
+	sourceElement.src = "//assets/Lil_Peep_x_Horse_Head_Right_Here.mp3".replace(/ /g, "%20");;
+	sourceElement.type = "audio/mpeg";
+	audioElement.appendChild(sourceElement);
+
+	const textNode = document.createTextNode("Your browser does not support the audio element.");
+	audioElement.appendChild(textNode);
+
+	let intervalId = setInterval(function() {
+		audioElement.volume = Math.min(audioElement.volume + 0.005, 1);
+		if (audioElement.volume >= 0.7) {
+		  clearInterval(intervalId);
+		}
+	  }, 200);
+	return audioElement
 }
 
 function create_webm_buttons() {
@@ -265,11 +302,13 @@ window.addEventListener('DOMContentLoaded', () => {
 	video.id = 'retrorem-bg';
 	video.setAttribute('autoplay', '');
 	video.setAttribute('loop', '');
-	video.src = '//assets/Retrorem.webm';
+	video.src = `//assets/${wallpapers[0]}`;
 
 	utils.subscribe_endpoint("/lol-gameflow/v1/gameflow-phase", updateLobbyRegaliaBanner)
 	utils.addCss("//assets/rem_style.css")
 	document.querySelector("body").prepend(video)
+	// document.querySelector("body").prepend(create_audio_element())
+	retrorem_play_pause()
 	//removeIframe()
 	utils.subscribe_endpoint('/lol-gameflow/v1/gameflow-phase', (message) => {
 		let phase = JSON.parse(message["data"])[2]["data"]
