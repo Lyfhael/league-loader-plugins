@@ -1,3 +1,4 @@
+const version = "0.2.0"
 const utils = require('./_utils')
 let auto_accept = require('./configs/auto_accept_button_config.json')["is_auto_accept_enabled"] // determine if it should auto accept matchmaking
 let queue_accepted = false // determine if the queue has been accepted by the script, so to not spam /accept
