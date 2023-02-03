@@ -2,6 +2,7 @@ const utils = require('./_utils')
 let default_settings = require('./configs/rem_style_config.json') // default settings for wallpapers (should or not be animated, default wallpaper etc)
 let previous_page;
 let ranked_observer;
+let patcher_go_to_default_home_page = true
 let force_bg_pause = default_settings["default_animated"];
 let wallpapers = ["Retrorem.webm", "Retrorem2.webm"]
 let bg_filters = {
@@ -202,6 +203,52 @@ function create_webm_buttons() {
 	nextBg.append(nextBgIcon)
 }
 
+function create_element(tagName, className, content) {
+	const el = document.createElement(tagName);
+	el.className = className;
+	if (content) {
+		el.innerHTML = content;
+	}
+	return el;
+};
+
+function go_to_default_home_page() {
+	if (default_settings["default_home_page"]) {
+		document.querySelector(`lol-uikit-navigation-item[item-id='${default_settings["default_home_page"]}']`).click()
+	}
+}
+
+function add_retrorem_home_page() {
+	let lol_home = document.querySelector(".rcp-fe-lol-home > lol-uikit-section-controller")
+
+	if (lol_home) {
+		if (!lol_home.querySelector("[section-id='retrorem-home']")) {
+			let retrorem_home = create_element("lol-uikit-section", "")
+			let div = create_element("div", "wrapper")
+
+			div.id = "retrorem-home"
+			retrorem_home.setAttribute("section-id", "retrorem-home")
+			retrorem_home.append(div)
+			lol_home.prepend(retrorem_home)
+		}
+	}
+}
+
+function add_retrorem_home_navbar() {
+	let navbar = document.querySelector(".rcp-fe-lol-home > lol-uikit-navigation-bar")
+
+	if (navbar) {
+		if (!navbar.querySelector("[item-id='retrorem-home']")) {
+			let retrorem_home_navbar_item = create_element("lol-uikit-navigation-item", "")
+
+			retrorem_home_navbar_item.setAttribute("item-id", "retrorem-home")
+			retrorem_home_navbar_item.setAttribute("priority", 1)
+			retrorem_home_navbar_item.textContent = "Home"
+			navbar.prepend(retrorem_home_navbar_item)
+		}
+	}
+}
+
 let pageChangeMutation = (node) => {
 	let pagename;
 	let retrorem_bg_elem = document.getElementById("retrorem-bg")
@@ -214,10 +261,19 @@ let pageChangeMutation = (node) => {
 		if (!document.getElementsByClassName("webm-bottom-buttons-container").length) {
 			create_webm_buttons()
 		}
+		add_retrorem_home_page()
+		add_retrorem_home_navbar()
+		go_to_default_home_page()
 	}
 	else if (pagename != "rcp-fe-lol-navigation-screen" && pagename != "window-controls" && pagename != "rcp-fe-lol-home" && pagename != "social") {
 		if (document.getElementsByClassName("webm-bottom-buttons-container").length) {
 			document.getElementsByClassName("webm-bottom-buttons-container")[0].remove()
+		}
+	}
+	if (pagename == "social") {
+		if (patcher_go_to_default_home_page){
+			go_to_default_home_page()
+			patcher_go_to_default_home_page = false
 		}
 	}
 	if (pagename == "rcp-fe-lol-uikit-full-page-modal-controller") {
