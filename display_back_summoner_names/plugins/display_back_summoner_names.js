@@ -1,4 +1,4 @@
-const version = "0.2.2"
+const version = "0.2.3"
 const utils = require('./_utils')
 
 async function fetch_lobby_summoners() {
@@ -69,6 +69,9 @@ function create_name_and_role_container(name, roles) {
 
 	nameAndRoleContainer.append(playerName)
 	for (let role of roles) {
+		if (role == "Unknown"){
+			continue
+		}
 		let roleIcon = create_element("img", "role-icon-revealer")
 
 		roleIcon.src = `//assets/icon-position-${role.toLocaleLowerCase().replace(' ', '-')}.svg`
@@ -194,6 +197,7 @@ async function scrape_leagueofgraphs(players, region) {
 					catch { result.rank_last_season = "Unranked" }
 					try {result.main_roles = player_card.querySelector(".rolesBox > .imgFlex > .txt > .content.oneLiner > span.highlight").textContent.split('\n')[1].trim().split(", ")}
 					catch {result.main_roles = []}
+					console.log(result.main_roles)
 					if (player_card.querySelector(".premadeHistoryTagContainer > .premadeTag")) {
 						result.premade = player_card.querySelector(".premadeHistoryTagContainer > .premadeTag").className.split('-')[1]
 					}
