@@ -1,4 +1,4 @@
-const version = "0.2.1"
+const version = "0.2.2"
 const utils = require('./_utils')
 
 async function fetch_lobby_summoners() {
@@ -189,7 +189,7 @@ async function scrape_leagueofgraphs(players, region) {
 						result.wins = player_card.querySelector("#mainsBox .win > span").textContent
 						result.losses = player_card.querySelector("#mainsBox .played > span").textContent - result.wins
 					}
-					catch {result.losses = 0; result.winss = 0}
+					catch {result.losses = 0; result.wins = 0}
 					try { result.rank_last_season = player_card.querySelector(".inlinePreviousSeasonRanking > img").title }
 					catch { result.rank_last_season = "Unranked" }
 					try {result.main_roles = player_card.querySelector(".rolesBox > .imgFlex > .txt > .content.oneLiner > span.highlight").textContent.split('\n')[1].trim().split(", ")}
