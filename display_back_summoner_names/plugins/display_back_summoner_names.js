@@ -1,4 +1,4 @@
-const version = "0.2.0"
+const version = "0.2.1"
 const utils = require('./_utils')
 
 async function fetch_lobby_summoners() {
@@ -181,13 +181,19 @@ async function scrape_leagueofgraphs(players, region) {
 				for (let player_card of doc.querySelector(".cards-list.cards-list-centered").children){
 					let result = {}
 					result.name = player_card.querySelector("[data-summonername]").getAttribute("data-summonername")
-					result.rank = player_card.querySelector(".rankingsBox .txt > .title").childNodes[0].textContent.split("\n")[1].trim()
-					result.lps = player_card.querySelector(".rankingsBox .txt > .title").childNodes[1].textContent.split(" ")[0]
-					result.wins = player_card.querySelector("#mainsBox .win > span").textContent
-					result.losses = player_card.querySelector("#mainsBox .played > span").textContent - result.wins
+					try {result.rank = player_card.querySelector(".rankingsBox .txt > .title").childNodes[0].textContent.split("\n")[1].trim()}
+					catch {result.rank = "Unranked"}
+					try {result.lps = player_card.querySelector(".rankingsBox .txt > .title").childNodes[1].textContent.split(" ")[0]}
+					catch {result.lps = 0}
+					try {
+						result.wins = player_card.querySelector("#mainsBox .win > span").textContent
+						result.losses = player_card.querySelector("#mainsBox .played > span").textContent - result.wins
+					}
+					catch {result.losses = 0; result.winss = 0}
 					try { result.rank_last_season = player_card.querySelector(".inlinePreviousSeasonRanking > img").title }
 					catch { result.rank_last_season = "Unranked" }
-					result.main_roles = player_card.querySelector(".rolesBox > .imgFlex > .txt > .content.oneLiner > span.highlight").textContent.split('\n')[1].trim().split(", ")
+					try {result.main_roles = player_card.querySelector(".rolesBox > .imgFlex > .txt > .content.oneLiner > span.highlight").textContent.split('\n')[1].trim().split(", ")}
+					catch {result.main_roles = []}
 					if (player_card.querySelector(".premadeHistoryTagContainer > .premadeTag")) {
 						result.premade = player_card.querySelector(".premadeHistoryTagContainer > .premadeTag").className.split('-')[1]
 					}
