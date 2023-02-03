@@ -1,3 +1,4 @@
+const version = "0.2.0"
 const utils = require('./_utils')
 
 async function fetch_lobby_summoners() {
