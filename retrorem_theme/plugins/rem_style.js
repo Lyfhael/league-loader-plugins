@@ -1,3 +1,4 @@
+const version = "0.2.0"
 const utils = require('./_utils')
 let default_settings = require('./configs/rem_style_config.json') // default settings for wallpapers (should or not be animated, default wallpaper etc)
 let previous_page;
