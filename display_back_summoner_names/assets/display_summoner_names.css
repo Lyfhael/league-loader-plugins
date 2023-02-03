@@ -584,6 +584,10 @@ button#display-summoner-button-container:hover {
     bottom: 12px;
 }
 
+.hide-revealer {
+	visibility: hidden;
+}
+
 .premade-number {
     position: relative;
     color: white;
