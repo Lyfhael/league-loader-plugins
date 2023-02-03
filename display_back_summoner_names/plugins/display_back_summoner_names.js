@@ -142,7 +142,7 @@ function create_player_info_container(player) {
 }
 
 function generate_player_box(player) {
-	const playerSuperContainerRevealer = create_element("div", "player-super-container-revealer")
+	const playerSuperContainerRevealer = create_element("div", "player-super-container-revealer hide-revealer")
 	const playerContainerRevealer = create_element("div", "player-container-revealer")
 	const playerIconContainer = create_player_icon_container(player.level, player.profileIcon)
 	const playerInfoContainer = create_player_info_container(player)
@@ -265,7 +265,20 @@ function remove_reveal_box() {
 	}
 }
 
-async function create_reveal_box() {
+function create_loading_wheel() {
+	const spinnerDiv = document.createElement('div');
+	spinnerDiv.classList.add('managed-iframe-spinner');
+	
+	const spinnerImage = document.createElement('img');
+	spinnerImage.src = '/fe/lol-static-assets/images/spinner.png';
+	spinnerImage.classList.add('lol-uikit-spinner-image', 'lol-uikit-spinner-image-default-size', 'loading-wheel-revealer');
+	
+	spinnerDiv.appendChild(spinnerImage);
+
+	return spinnerDiv
+}
+
+async function create_reveal_box(target) {
 	const container = document.createElement("div");
 	container.id = "players-name-reveal-container";
 	container.className = "modal";
@@ -316,7 +329,10 @@ async function create_reveal_box() {
 		remove_reveal_box()
 	})
 
+	const spinnerDiv = create_loading_wheel()
+
 	modal.appendChild(title);
+	modal.appendChild(spinnerDiv)
 	dialogContent.appendChild(modal);
 	dialogFrame.appendChild(dialogContent);
 	dialogFrame.appendChild(buttonGroup);
@@ -325,15 +341,17 @@ async function create_reveal_box() {
 	container.appendChild(backdrop);
 	container.appendChild(dialogConfirm);
 
+	target.prepend(container)
 	let players = await fetch_lobby_summoners()
 	let region = /[a-zA-Z]+/.exec(document.body.dataset.region)[0]
 	let scraped_players = await scrape_leagueofgraphs(players, region)
 	console.log(scraped_players)
 	for (let scraped_player of scraped_players) {
 		modal.appendChild(generate_player_box(scraped_player))
-		modal.appendChild(create_element("hr", "hr-revealer"))
+		modal.appendChild(create_element("hr", "hr-revealer hide-revealer"))
 	}
-	return container
+	document.querySelector(".loading-wheel-revealer").remove()
+	document.querySelectorAll(".hide-revealer").forEach((elem) => {elem.classList.remove("hide-revealer")})
 }
 
 async function reveal_players_box() {
@@ -341,7 +359,7 @@ async function reveal_players_box() {
 		return
 	}
 	else {
-		document.querySelector(".champion-select-main-container .visible").prepend(await create_reveal_box())
+		await create_reveal_box(document.querySelector(".champion-select-main-container .visible"))
 	}
 }
 
