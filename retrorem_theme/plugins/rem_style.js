@@ -1,4 +1,4 @@
-const version = "0.2.0"
+const version = "0.2.1"
 const utils = require('./_utils')
 let default_settings = require('./configs/rem_style_config.json') // default settings for wallpapers (should or not be animated, default wallpaper etc)
 let previous_page;
@@ -250,6 +250,17 @@ function add_retrorem_home_navbar() {
 	}
 }
 
+function patch_default_home_page(){
+	let loop = 0
+	let intervalId = window.setInterval(() => {
+		if (loop >= 5) {
+			window.clearInterval(intervalId)
+		}
+		go_to_default_home_page()
+		loop += 1
+	}, 200)
+}
+
 let pageChangeMutation = (node) => {
 	let pagename;
 	let retrorem_bg_elem = document.getElementById("retrorem-bg")
@@ -265,6 +276,9 @@ let pageChangeMutation = (node) => {
 		add_retrorem_home_page()
 		add_retrorem_home_navbar()
 		go_to_default_home_page()
+		if (previous_page == "rcp-fe-lol-parties" ){
+			patch_default_home_page()
+		}
 	}
 	else if (pagename != "rcp-fe-lol-navigation-screen" && pagename != "window-controls" && pagename != "rcp-fe-lol-home" && pagename != "social") {
 		if (document.getElementsByClassName("webm-bottom-buttons-container").length) {
