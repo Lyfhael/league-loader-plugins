@@ -2,7 +2,6 @@ const version = "1.2.0"
 import utils from '../_utils'
 import data from './config/auto_accept_button_config.json'// determine if it should auto accept matchmaking
 let auto_accept = data["is_auto_accept_enabled"]
-console.log("????????????????????", auto_accept)
 let queue_accepted = false // determine if the queue has been accepted by the script, so to not spam /accept
 
 /** Called upon clicking the Auto Accept button. Enable/Disable queue auto acceptation */

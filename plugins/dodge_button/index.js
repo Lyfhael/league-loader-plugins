@@ -1,6 +1,5 @@
 const version = "1.2.0"
 import utils from '../_utils'
-let ok = 0
 
 async function exitClient(){
 	await fetch("/process-control/v1/process/quit",
