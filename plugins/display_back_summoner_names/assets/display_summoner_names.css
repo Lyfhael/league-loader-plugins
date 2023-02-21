@@ -8,11 +8,11 @@
 }
 
 .visibility-off-icon {
-	background-image: url(/visibility_off.png);
+	background-image: url(//plugins/display_back_summoner_names/assets/visibility_off.png);
 }
 
 .visibility-on-icon {
-	background-image: url(/visibility_on.png);
+	background-image: url(//plugins/display_back_summoner_names/assets/visibility_on.png);
 }
 
 .display-summoner-button-icon:hover {

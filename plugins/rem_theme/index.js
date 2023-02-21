@@ -1,6 +1,8 @@
-const version = "0.2.1"
-const utils = require('./_utils')
-let default_settings = require('./configs/rem_style_config.json') // default settings for wallpapers (should or not be animated, default wallpaper etc)
+const version = "1.2.1"
+import utils from '../_utils'
+import data from './config/rem_style_config.json' // default settings for wallpapers (should or not be animated, default wallpaper etc)
+let default_settings = data
+console.log("????????????????????", default_settings)
 let previous_page;
 let ranked_observer;
 let patcher_go_to_default_home_page = true
@@ -82,6 +84,9 @@ var nodeRemovedEvent = function (event) {
 		let retroremBg = document.getElementById("retrorem-bg");
 		let viewportRoot = document.getElementById("rcp-fe-viewport-root")
 
+		if (!retroremBg || !viewportRoot) {
+			return;
+		}
 		viewportRoot.style.filter = "none"
 		retroremBg.style.filter = "brightness(0.7) saturate(0.8)"
 		document.removeEventListener("DOMNodeRemoved", nodeRemovedEvent);
@@ -127,10 +132,10 @@ function play_pause_set_icon(elem) {
 		return;
 	}
 	if (!force_bg_pause) {
-		pause_bg_icon.setAttribute("src", "//assets/pause_button.png")
+		pause_bg_icon.setAttribute("src", "//plugins/rem_theme/assets/pause_button.png")
 	}
 	else {
-		pause_bg_icon.setAttribute("src", "//assets/play_button.png")
+		pause_bg_icon.setAttribute("src", "//plugins/rem_theme/assets/play_button.png")
 	}
 }
 
@@ -141,7 +146,7 @@ function next_wallpaper() {
 	wallpapers.push(wallpapers.shift())
 	document.querySelector(":root").classList.add(wallpapers[0].replace(/\.[a-zA-Z]+$/, '-vars'))
 	setTimeout(function () {
-		retroremBg.src = `//assets/${wallpapers[0]}`
+		retroremBg.src = `//plugins/rem_theme/assets/${wallpapers[0]}`
 		retrorem_play_pause()
 		retroremBg.classList.remove("webm-hidden");
 	}, 500);
@@ -196,7 +201,7 @@ function create_webm_buttons() {
 		next_wallpaper()
 	})
 
-	nextBgIcon.setAttribute("src", "//assets/next_button.png")
+	nextBgIcon.setAttribute("src", "//plugins/rem_theme/assets/next_button.png")
 	document.getElementsByClassName("rcp-fe-lol-home")[0].appendChild(container)
 	container.append(pauseBg)
 	container.append(nextBg)
@@ -286,6 +291,12 @@ let pageChangeMutation = (node) => {
 		}
 	}
 	if (pagename == "social") {
+		// if (!document.querySelector(".hide-contact-bar-button")){
+		// 	let spanHideBar = document.createElement("span")
+
+		// 	spanHideBar.className = "hide-contact-bar-button"
+		// 	document.querySelector(".lol-social-actions-bar.actions > .actions-bar > .buttons").prepend(spanHideBar)
+		// }
 		if (patcher_go_to_default_home_page){
 			go_to_default_home_page()
 			patcher_go_to_default_home_page = false
@@ -368,15 +379,15 @@ window.addEventListener('load', () => {
 	utils.mutationObserverAddCallback(pageChangeMutation, ["screen-root"])
 })
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => {
 	const video = document.createElement('video');
 	video.id = 'retrorem-bg';
 	video.setAttribute('autoplay', '');
 	video.setAttribute('loop', '');
-	video.src = `//assets/${wallpapers[0]}`;
+	video.src = `//plugins/rem_theme/assets/${wallpapers[0]}`;
 
 	utils.subscribe_endpoint("/lol-gameflow/v1/gameflow-phase", updateLobbyRegaliaBanner)
-	utils.addCss("//assets/rem_style.css")
+	utils.addCss("//plugins/rem_theme/assets/rem_style.css")
 	document.querySelector("body").prepend(video)
 	// document.querySelector("body").prepend(create_audio_element())
 	retrorem_play_pause()
@@ -390,6 +401,6 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 		else {
 			retrorem_play_pause()
-		}
+		} 
 	})
 })

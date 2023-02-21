@@ -1,5 +1,5 @@
-const version = "0.2.0"
-const utils = require('./_utils')
+const version = "1.2.0"
+import utils from '../_utils'
 let ok = 0
 
 async function exitClient(){
@@ -51,7 +51,7 @@ let addDodgeAndExitButtonObserver = (mutations) => {
 	}
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => {
 	utils.routineAddCallback(addDodgeAndExitButtonObserver, ["bottom-right-buttons"])
-	// utils.addCss("//assets/dodge_button.css")
+	utils.addCss("./assets/dodge_button.css")
 })

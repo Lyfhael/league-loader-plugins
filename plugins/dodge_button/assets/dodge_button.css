@@ -1,0 +1,7 @@
+.dodge-button-container {
+	position: absolute;
+	right: 20px;
+	bottom: 19px;
+	display: flex;
+	align-items: flex-end
+}
