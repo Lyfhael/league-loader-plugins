@@ -1,4 +1,4 @@
-const version = "1.2.0"
+const version = "1.2.1"
 let riotclient_auth, riotclient_port;
 let regex_rc_auth = /^--riotclient-auth-token=(.+)$/
 let regex_rc_port = /^--riotclient-app-port=([0-9]+)$/

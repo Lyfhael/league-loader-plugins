@@ -1,5 +1,6 @@
-const version = "1.2.0"
+const version = "1.2.1"
 import utils from '../_utils'
+let ok = 0
 
 async function exitClient(){
 	await fetch("/process-control/v1/process/quit",
@@ -52,5 +53,5 @@ let addDodgeAndExitButtonObserver = (mutations) => {
 
 window.addEventListener('load', () => {
 	utils.routineAddCallback(addDodgeAndExitButtonObserver, ["bottom-right-buttons"])
-	utils.addCss("./assets/dodge_button.css")
+	utils.addCss("//plugins/dodge_button/assets/dodge_button.css")
 })

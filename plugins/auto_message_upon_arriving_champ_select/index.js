@@ -1,4 +1,4 @@
-const version = "1.2.0"
+const version = "1.2.1"
 import utils from '../_utils'
 let set_timeout_player_joined; // id of setTimeout that will trigger the send_message_in_lobby()
 let pvp_net_room_id; // chat room id
