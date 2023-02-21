@@ -1,12 +1,18 @@
-const version = "0.2.0"
-const utils = require('./_utils')
+const version = "1.2.0"
+import utils from '../_utils'
 let set_timeout_player_joined; // id of setTimeout that will trigger the send_message_in_lobby()
 let pvp_net_room_id; // chat room id
 let regex1 = /\/lol-chat\/v1\/conversations\/.+\/messages\/.+/
 let regex2 = /(?:\/lol-chat\/v1\/conversations\/)(.+)(?:\/messages\/.+)/
-let message_to_send = "I am Ariane, an AI-powered chat bot :) You can interact with me through the command /ariane"
+let message_to_send = []
 let message_sent = false;  // determine whether or not the message has been sent in the lobby, so to not spam it
 let message_sent_phase; // stores previous phase state
+
+function add_messsages_to_send(callback) {
+	message_to_send.push(callback)
+}
+
+window.add_messsages_to_send = add_messsages_to_send
 
 /**
  * Send message in the current lobby.
@@ -26,7 +32,8 @@ async function send_message_in_lobby(message) {
 /** Called upon connecting to a lobby with other users(champ-select, post game lobby, etc). */
 let sendMessageUponArrivingLobby = async message => {
 	const data = JSON.parse(message.data)
-	const phasesTracked = ["ChampSelect", "PreEndOfGame"]
+	const phasesTracked = ["ChampSelect"]
+	// const phasesTracked = ["ChampSelect", "PreEndOfGame"]
 	// const phasesTracked = ["ChampSelect", "EndOfGame", "PreEndOfGame", "WaitingForStats"]
 	if (utils.debug_sub)
 		console.log(utils.phase, utils.pvp_net_id, utils.summoner_id, pvp_net_room_id)
@@ -37,7 +44,12 @@ let sendMessageUponArrivingLobby = async message => {
 		pvp_net_room_id = regex2.exec(data[2]["uri"])[1]
 		clearTimeout(set_timeout_player_joined) // goal is to delay the sending of the message until last player joined. Remove this line if necessary
 		set_timeout_player_joined = setTimeout(async () => {
-			await send_message_in_lobby(message_to_send)
+			for (let message_cron of message_to_send){
+				let message = message_cron()
+				if (message && message.length > 0){
+					await send_message_in_lobby(message)
+				}
+			}
 		}, 1500)
 	}
 }
@@ -45,7 +57,7 @@ let sendMessageUponArrivingLobby = async message => {
 /** If phase changes, we reset message_sent to false as we most likely changed lobby */
 let resetMessageSentStatus = async message => {if (JSON.parse(message["data"])[2]["data"] != message_sent_phase) message_sent = false}
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => {
 	utils.subscribe_endpoint("/lol-chat/v1/conversations", sendMessageUponArrivingLobby)
 	utils.subscribe_endpoint('/lol-gameflow/v1/gameflow-phase', resetMessageSentStatus)
 })

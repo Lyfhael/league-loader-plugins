@@ -1,7 +1,7 @@
-const version = "0.2.3"
-const utils = require('./_utils')
+const version = "1.2.3"
+import utils from '../_utils'
 
-async function fetch_lobby_summoners() {
+async function fetch_unobfuscated_participants() {
 	let auth_token = btoa(`riot:${utils.riotclient_auth}`);
 	var playerlist = [];
 	let headers = {
@@ -27,7 +27,80 @@ async function fetch_lobby_summoners() {
 	return playerlist
 }
 
-window.fetch_lobby_summoners = fetch_lobby_summoners
+window.fetch_unobfuscated_participants = fetch_unobfuscated_participants
+
+async function fetch_obfuscated_participants() {
+	let results = [];
+
+	await fetch("/lol-champ-select/v1/session").then(response => response.json())
+		.then(data => {
+			for (let player of data["myTeam"]){
+				results.push({obfuscatedSummonerId: player["obfuscatedSummonerId"], obfuscatedPuuid: player["obfuscatedPuuid"], summonerId: player["summonerId"], puuid: player["puuid"]})
+				console.log({obfuscatedSummonerId: player["obfuscatedSummonerId"], obfuscatedPuuid: player["obfuscatedPuuid"], summonerId: player["summonerId"], puuid: player["puuid"]})
+			}
+		})
+	return results
+}
+
+window.fetch_participants = fetch_obfuscated_participants
+
+async function fetch_muted_players() {
+	await fetch('/lol-champ-select/v1/muted-players').then(response => response.json())
+	.then(data => {
+		console.log(data)
+	})
+}
+
+window.fetch_muted_players = fetch_muted_players
+
+async function toggle_mute_player(summonerId, puuid, obfuscatedSummonerId, obfuscatedPuuid) {
+	await fetch('/lol-champ-select/v1/toggle-player-muted', {
+		method: 'POST',
+		headers: {'content-type': 'application/json'},
+		body: JSON.stringify({
+			summonerId: summonerId || 0,
+			puuid: puuid || "",
+			obfuscatedSummonerId: obfuscatedSummonerId || 1,
+			obfuscatedPuuid: obfuscatedPuuid || "1"
+		})
+	}).then(response => response.text())
+	.then(data => {
+		console.log(data)
+	})
+}
+
+async function fetch_sid_and_puuid_from_participants_names(names){
+	let results = []
+
+	for (let name of names) {
+		await fetch(`/lol-summoner/v1/summoners?name=${encodeURI(name)}`).then(r => r.json()).then(data =>{
+			results.push({name:name, puuid:data.puuid, summonerId:data.summonerId})
+		})
+	}
+	return results
+}
+
+async function mute_all_then_return_list(){
+	let obfuscated_participants = await fetch_obfuscated_participants()
+	let unobfuscated_participants_names = await fetch_unobfuscated_participants()
+	let unobfuscated_participants = await fetch_sid_and_puuid_from_participants_names(unobfuscated_participants_names)
+
+	for (let participant of unobfuscated_participants) {
+		console.log("muting unobfuscated", participant.summonerId, participant.puuid)
+		await toggle_mute_player(participant.summonerId, participant.puuid, 0, 0)
+		break
+	}
+	for (let participant of obfuscated_participants) {
+		console.log("muting obfuscated", participant.obfuscatedSummonerId, participant.obfuscatedPuuid)
+		await toggle_mute_player(0, 0, participant.obfuscatedSummonerId, participant.obfuscatedPuuid)
+		break
+	}
+	await fetch_muted_players()
+}
+
+window.mute_all_then_return_list = mute_all_then_return_list
+
+window.toggle_mute_player = toggle_mute_player
 
 function create_element(tagName, className, content) {
 	const el = document.createElement(tagName);
@@ -74,7 +147,7 @@ function create_name_and_role_container(name, roles) {
 		}
 		let roleIcon = create_element("img", "role-icon-revealer")
 
-		roleIcon.src = `//assets/icon-position-${role.toLocaleLowerCase().replace(' ', '-')}.svg`
+		roleIcon.src = `//plugins/display_back_summoner_names/assets/icon-position-${role.toLocaleLowerCase().replace(' ', '-')}.svg`
 		roleIcon.title = `Main ${role}`
 		nameAndRoleContainer.append(roleIcon)
 	}
@@ -90,7 +163,7 @@ function create_rank_information(wins, losses, rank, lps) {
 	const winCount = create_element("span", "win-revealer", `Wins <b>${wins}</b>`)
 	const lossCount = create_element("span", "loss-revealer", `Losses <b>${losses}</b>`)
 
-	rankIcon.src = `//assets/rank-icon-${rank.toLocaleLowerCase().split(" ")[0]}.png`
+	rankIcon.src = `//plugins/display_back_summoner_names/assets/rank-icon-${rank.toLocaleLowerCase().split(" ")[0]}.png`
 	rankGameInformation.append(rankElo)
 	rankGameInformation.append(winCount)
 	rankGameInformation.append(lossCount)
@@ -117,7 +190,7 @@ function create_premade_items(premade) {
 		var premadeIcon = create_element("img", "premade-icon")
 		var premadeNumber = create_element("span", "premade-number", premade)
 
-		premadeIcon.src = "//assets/players-duo.svg"
+		premadeIcon.src = "//plugins/display_back_summoner_names/assets/players-duo.svg"
 		return [premadeIcon, premadeNumber]
 	}
 
@@ -353,7 +426,7 @@ async function create_reveal_box(target) {
 	container.appendChild(dialogConfirm);
 
 	target.prepend(container)
-	let players = await fetch_lobby_summoners()
+	let players = await fetch_unobfuscated_participants()
 	let region = /[a-zA-Z]+/.exec(document.body.dataset.region)[0]
 	let scraped_players = await scrape_leagueofgraphs(players, region)
 	console.log(scraped_players)
@@ -397,7 +470,7 @@ let addRevealPlayersButtonObserver = (mutations) => {
 	}
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-	utils.addCss("//assets/display_summoner_names.css")
+window.addEventListener('load', () => {
+	utils.addCss("./assets/display_summoner_names.css")
 	utils.routineAddCallback(addRevealPlayersButtonObserver, ["loadout-edit-controls"])
 })

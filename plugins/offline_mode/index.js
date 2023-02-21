@@ -1,5 +1,5 @@
-const version = "0.2.0"
-const utils = require('./_utils')
+const version = "1.2.0"
+import utils from '../_utils'
 let covert_status = "chat";
 
 /** return the player availability status */
@@ -81,7 +81,7 @@ let availabilityButtonMutationObserver = async (mutations) => {
 	}
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => {
 	utils.subscribe_endpoint("/lol-gameflow/v1/gameflow-phase", champSelectPatchStatus)
 	utils.routineAddCallback(availabilityButtonMutationObserver, ["availability-hitbox", "status-message"])
 })

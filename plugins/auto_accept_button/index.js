@@ -1,6 +1,8 @@
-const version = "0.2.0"
-const utils = require('./_utils')
-let auto_accept = require('./configs/auto_accept_button_config.json')["is_auto_accept_enabled"] // determine if it should auto accept matchmaking
+const version = "1.2.0"
+import utils from '../_utils'
+import data from './config/auto_accept_button_config.json'// determine if it should auto accept matchmaking
+let auto_accept = data["is_auto_accept_enabled"]
+console.log("????????????????????", auto_accept)
 let queue_accepted = false // determine if the queue has been accepted by the script, so to not spam /accept
 
 /** Called upon clicking the Auto Accept button. Enable/Disable queue auto acceptation */
@@ -30,25 +32,39 @@ let autoAcceptCallback = async message => {
 	}
 }
 
+function fetch_or_create_champselect_buttons_container() {
+	if (document.querySelector(".cs-buttons-container")) {
+		return document.querySelector(".cs-buttons-container")
+	}
+	else {
+		const div = document.createElement("div")
+
+		div.className = "cs-buttons-container"
+		document.querySelector(".v2-footer-notifications.ember-view").append(div)
+		return div
+	}
+}
+
 /** Callback function to be sent in routineAddCallback(). Will create the Auto Accept button */
 let autoAcceptMutationObserver = (mutations) => {
 	if (document.querySelector(".v2-footer-notifications.ember-view") != null && document.getElementById("autoAcceptQueueButton") == null) {
 		let newOption = document.createElement("lol-uikit-radio-input-option");
+		let container = fetch_or_create_champselect_buttons_container()
+	
 		newOption.setAttribute("id", "autoAcceptQueueButton");
 		newOption.setAttribute("onclick", "window.autoAcceptQueueButton()");
 		if (auto_accept){
 			newOption.setAttribute("selected", "");
 		}
 		newOption.innerHTML = "<div class='auto-accept-button-text'>Auto Accept</div>";
-
-		let parentElement = document.querySelector(".v2-footer-notifications.ember-view");
-		parentElement.append(newOption);
+		container.append(newOption);
 	}
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => {
 	utils.subscribe_endpoint('/lol-gameflow/v1/gameflow-phase', autoAcceptCallback)
 	utils.routineAddCallback(autoAcceptMutationObserver, ["v2-footer-notifications.ember-view"])
+	utils.addCss("./assets/auto_accept_button.css")
 })
 
 let acceptMatchmaking = async () => await fetch('/lol-matchmaking/v1/ready-check/accept', { method: 'POST' })
