@@ -1,4 +1,4 @@
-const version = "1.2.3"
+const version = "1.2.4"
 import utils from '../_utils'
 
 async function fetch_unobfuscated_participants() {
@@ -471,6 +471,6 @@ let addRevealPlayersButtonObserver = (mutations) => {
 }
 
 window.addEventListener('load', () => {
-	utils.addCss("./assets/display_summoner_names.css")
+	utils.addCss("//plugins/display_back_summoner_names/assets/display_summoner_names.css")
 	utils.routineAddCallback(addRevealPlayersButtonObserver, ["loadout-edit-controls"])
 })

@@ -1,7 +1,8 @@
-const version = "1.2.0"
+const version = "1.2.1"
 import utils from '../_utils'
 import data from './config/auto_accept_button_config.json'// determine if it should auto accept matchmaking
 let auto_accept = data["is_auto_accept_enabled"]
+console.log("????????????????????", auto_accept)
 let queue_accepted = false // determine if the queue has been accepted by the script, so to not spam /accept
 
 /** Called upon clicking the Auto Accept button. Enable/Disable queue auto acceptation */
@@ -63,7 +64,7 @@ let autoAcceptMutationObserver = (mutations) => {
 window.addEventListener('load', () => {
 	utils.subscribe_endpoint('/lol-gameflow/v1/gameflow-phase', autoAcceptCallback)
 	utils.routineAddCallback(autoAcceptMutationObserver, ["v2-footer-notifications.ember-view"])
-	utils.addCss("./assets/auto_accept_button.css")
+	utils.addCss("//plugins/auto_accept_button/assets/auto_accept_button.css")
 })
 
 let acceptMatchmaking = async () => await fetch('/lol-matchmaking/v1/ready-check/accept', { method: 'POST' })
