@@ -1,8 +1,8 @@
 const version = "1.2.1"
 import utils from '../_utils'
 import data from './config/rem_style_config.json' // default settings for wallpapers (should or not be animated, default wallpaper etc)
+
 let default_settings = data
-console.log("????????????????????", default_settings)
 let previous_page;
 let ranked_observer;
 let patcher_go_to_default_home_page = true
