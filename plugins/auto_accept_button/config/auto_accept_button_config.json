@@ -1,3 +1,4 @@
 {
-	"is_auto_accept_enabled":true
+	"is_auto_accept_enabled":true,
+	"delay": 9000
 }
