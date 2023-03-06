@@ -1,4 +1,4 @@
 {
 	"is_auto_accept_enabled":true,
-	"delay": 9000
+	"delay": 2000 // time to wait before accepting queue
 }
