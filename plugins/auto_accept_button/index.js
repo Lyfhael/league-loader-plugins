@@ -1,4 +1,4 @@
-const version = "1.2.1"
+const version = "1.2.2"
 import utils from '../_utils'
 import data from './config/auto_accept_button_config.json'// determine if it should auto accept matchmaking
 let auto_accept = data["is_auto_accept_enabled"]
