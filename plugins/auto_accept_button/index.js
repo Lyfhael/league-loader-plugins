@@ -25,7 +25,7 @@ window.autoAcceptQueueButton = autoAcceptQueueButton
 let autoAcceptCallback = async message => {
 	utils.phase = JSON.parse(message["data"])[2]["data"]
 	if (utils.phase == "ReadyCheck" && auto_accept && !queue_accepted) {
-		await setTimeout(acceptMatchmaking, 90000); // delay the accept by a maximum amount
+		await setTimeout(acceptMatchmaking, data.delay); // delay the accept by a maximum amount
 		queue_accepted = true
 	}
 	else if (utils.phase != "ReadyCheck") {
