@@ -1,9 +1,10 @@
-const version = "1.2.1"
+const version = "1.2.2"
 import utils from '../_utils'
 import data from './config/auto_accept_button_config.json'// determine if it should auto accept matchmaking
 let auto_accept = data["is_auto_accept_enabled"]
 console.log("????????????????????", auto_accept)
 let queue_accepted = false // determine if the queue has been accepted by the script, so to not spam /accept
+let player_declined = false // determine if the user has declined the queue in the delay time.
 
 /** Called upon clicking the Auto Accept button. Enable/Disable queue auto acceptation */
 function autoAcceptQueueButton(){
@@ -24,7 +25,7 @@ window.autoAcceptQueueButton = autoAcceptQueueButton
 let autoAcceptCallback = async message => {
 	utils.phase = JSON.parse(message["data"])[2]["data"]
 	if (utils.phase == "ReadyCheck" && auto_accept && !queue_accepted) {
-		await acceptMatchmaking()
+		await setTimeout(acceptMatchmaking, data.delay); // delay the accept by a maximum amount
 		queue_accepted = true
 	}
 	else if (utils.phase != "ReadyCheck") {
@@ -60,11 +61,25 @@ let autoAcceptMutationObserver = (mutations) => {
 		container.append(newOption);
 	}
 }
+/** Callback function for the player Response */
+let declinedQueueCallback = async message => {
+	let status = JSON.parse(message["data"])[2]["data"]["playerResponse"]; // Checking if the player has declined the match
+	if (status == "Declined") {
+		player_declined = true;
+	} else {
+		player_declined = false;
+	}
+}
 
 window.addEventListener('load', () => {
 	utils.subscribe_endpoint('/lol-gameflow/v1/gameflow-phase', autoAcceptCallback)
+	utils.subscribe_endpoint('/lol-matchmaking/v1/ready-check', declinedQueueCallback)
 	utils.routineAddCallback(autoAcceptMutationObserver, ["v2-footer-notifications.ember-view"])
 	utils.addCss("//plugins/auto_accept_button/assets/auto_accept_button.css")
 })
 
-let acceptMatchmaking = async () => await fetch('/lol-matchmaking/v1/ready-check/accept', { method: 'POST' })
+let acceptMatchmaking = async () => {
+	if (player_declined) return;
+	await fetch('/lol-matchmaking/v1/ready-check/accept', { method: 'POST' })
+
+}
