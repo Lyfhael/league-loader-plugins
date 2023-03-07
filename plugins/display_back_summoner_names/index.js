@@ -1,4 +1,4 @@
-const version = "1.2.4"
+const version = "1.2.5"
 import utils from '../_utils'
 
 async function fetch_unobfuscated_participants() {
@@ -8,7 +8,7 @@ async function fetch_unobfuscated_participants() {
 		"Connection": "keep-alive", "Authorization": `Basic ${auth_token}`, "Accept": "application/json", "Method": "GET",
 		"Access-Control-Allow-Credentials": "true", "Access-Control-Allow-Origin": "127.0.0.1", "Content-Type": "application/json",
 		"Origin": `https://127.0.0.1:${utils.riotclient_port}`, "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors",
-		"Sec-Fetch-Site": "same-origin", "Sec-Fetch-User": "?F", "sec-ch-ua": "Chromium", "Accept-Language": "en-US,en;q=0.9",
+		"Sec-Fetch-Siteg": "same-origin", "Sec-Fetch-User": "?F", "sec-ch-ua": "Chromium", "Accept-Language": "en-US,en;q=0.9",
 		"Referer": `https://127.0.0.1:${utils.riotclient_port}/index.html`, "Accept-Encoding": "gzip, deflate, br",
 		"User-Agent": `Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) RiotClient/1.5.6 (CEF 74) Safari/537.36`
 	};
@@ -427,7 +427,7 @@ async function create_reveal_box(target) {
 
 	target.prepend(container)
 	let players = await fetch_unobfuscated_participants()
-	let region = /[a-zA-Z]+/.exec(document.body.dataset.region)[0]
+	let region = get_region_name()
 	let scraped_players = await scrape_leagueofgraphs(players, region)
 	console.log(scraped_players)
 	for (let scraped_player of scraped_players) {
@@ -436,6 +436,19 @@ async function create_reveal_box(target) {
 	}
 	document.querySelector(".loading-wheel-revealer").remove()
 	document.querySelectorAll(".hide-revealer").forEach((elem) => {elem.classList.remove("hide-revealer")})
+}
+
+function get_region_name(region) {
+	let region = document.body.dataset.region
+	if (region == "la1") {
+		return ("lan")
+	}
+	else if (region == "la2") {
+		return ("las")
+	}
+	else {
+		return /[a-zA-Z]+/.exec(region)[0]
+	}
 }
 
 async function reveal_players_box() {
