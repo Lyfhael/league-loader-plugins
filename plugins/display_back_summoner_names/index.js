@@ -438,7 +438,7 @@ async function create_reveal_box(target) {
 	document.querySelectorAll(".hide-revealer").forEach((elem) => {elem.classList.remove("hide-revealer")})
 }
 
-function get_region_name(region) {
+function get_region_name() {
 	let region = document.body.dataset.region
 	if (region == "la1") {
 		return ("lan")
