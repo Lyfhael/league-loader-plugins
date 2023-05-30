@@ -22,7 +22,7 @@ function generateDodgeAndExitButton(siblingDiv) {
 	const placeHolderDiv = document.createElement("div")
 
 	parentDiv.setAttribute("class", "dodge-button-container")
-	parentDiv.setAttribute("style", "position: absolute;right: 0px;bottom: 57px;display: flex;align-items: flex-end;")
+	parentDiv.setAttribute("style", "position: absolute; right: 10px; bottom: 57px; display: flex; align-items: flex-end;")
 	div.setAttribute("class", "quit-button ember-view");
 	div.setAttribute("onclick", "window.dodgeQueue()")
 	div.setAttribute("id", "dodgeButton");
