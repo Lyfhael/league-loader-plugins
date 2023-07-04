@@ -58,7 +58,7 @@ let updateUserPvpNetInfos = async message => {
 }
 
 /** Callback function to be sent in subscribe_endpoint() to update the variable monitoring the gameflow phase */
-let updatePhaseCallback = async message => { phase = JSON.parse(message["data"])[2]["data"]; }
+let updatePhaseCallback = async message => { utils.phase = JSON.parse(message["data"])[2]["data"]; }
 
 /** Callback function to be sent in subscribe_endpoint() to log uri & data object */
 let debugLogEndpoints = async message => { if (debug_sub) console.log(JSON.parse(message["data"])[2]["uri"], JSON.parse(message["data"])[2]["data"]) }
@@ -66,7 +66,7 @@ let debugLogEndpoints = async message => { if (debug_sub) console.log(JSON.parse
 /**
  * Add function to be called in the MutationObserver API
  * @param {function} callback The callback function
- * @param {[string]} targets The list of class targets
+ * @param {[string]} target The list of class targets
  */
 function routineAddCallback(callback, target) {
 	routines.push({ "callback": callback, "targets": target })
